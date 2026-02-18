@@ -121,7 +121,6 @@ class userService {
                 });
             }
 
-            // ۴. پاسخ موفقیت‌آمیز
             res.status(200).json({
                 status: true,
                 message: 'اطلاعات کاربر با موفقیت به‌روزرسانی شد',
@@ -152,6 +151,81 @@ class userService {
             res.status(500).json({
                 status: false,
                 message: 'خطای سرور در هنگام به‌روزرسانی',
+                error: error.message,
+            });
+        }
+    }
+    async deleteUserById(req, res) {
+        const { id } = req.params;
+        try {
+            const deletedUser = await user.findByIdAndDelete(id);
+
+            if (!deletedUser) {
+                return res.status(404).json({
+                    status: false,
+                    message: 'کاربری برای حذف پیدا نشد.',
+                });
+            }
+
+            res.status(200).json({
+                status: true,
+                message: 'کاربر با موفقیت حذف شد.',
+            });
+        } catch (error) {
+            res.status(500).json({
+                status: false,
+                message: 'خطا در عملیات حذف',
+                error: error.message,
+            });
+        }
+    }
+    async findAllUsers(req, res) {
+        try {
+            // ۱. دریافت پارامترها از Query String
+            // پیش‌فرض صفحه ۱ و تعداد هر صفحه ۱۰ کاربر
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const skip = (page - 1) * limit;
+
+            // ۲. فیلترینگ (Filtering)
+            // کپی از کوئری برای فیلتر کردن پارامترهای خاص مثل page و limit
+            const queryObj = { ...req.query };
+            const excludedFields = ['page', 'sort', 'limit', 'fields'];
+            excludedFields.forEach((el) => delete queryObj[el]);
+
+            // قابلیت فیلتر پیشرفته (مثلاً جستجوی نام با حروف مشابه)
+            if (queryObj.name) {
+                queryObj.name = { $regex: queryObj.name, $options: 'i' }; // 'i' یعنی حساس نبودن به حروف بزرگ و کوچک
+            }
+
+            // ۳. اجرای کوئری با Pagination
+            const users = await user
+                .find(queryObj)
+                .select('-password -__v') // عدم نمایش پسورد
+                .skip(skip)
+                .limit(limit)
+                .sort('-createdAt'); // مرتب‌سازی بر اساس جدیدترین‌ها
+
+            // ۴. گرفتن تعداد کل برای محاسبات فرانت‌انده
+            const totalUsers = await user.countDocuments(queryObj);
+            const totalPages = Math.ceil(totalUsers / limit);
+
+            res.status(200).json({
+                status: true,
+                results: users.length,
+                pagination: {
+                    totalUsers,
+                    totalPages,
+                    currentPage: page,
+                    hasNextPage: page < totalPages,
+                    hasPrevPage: page > 1,
+                },
+                data: { users },
+            });
+        } catch (error) {
+            res.status(500).json({
+                status: false,
+                message: 'خطا در دریافت لیست کاربران',
                 error: error.message,
             });
         }

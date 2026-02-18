@@ -9,8 +9,8 @@ router.get(
 );
 router.get('/findUserWithId/:id', userController.findByUserID);
 router.put('/updateUser/:id', userController.updateUser);
-// router.post('/', userController.deleteUser);
-// router.post('/', userController.getAllUsers);
+router.delete('/deleteUser/:id', userController.deleteUser);
+router.get('/allUsers', userController.getAllUsers);
 // router.post('/', userController.comparePassword);
 // router.post('/', userController.generateAuthToken);
 

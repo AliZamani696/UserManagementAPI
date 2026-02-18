@@ -17,5 +17,11 @@ class userController {
     updateUser(req, res) {
         userService.updateUserDetail(req, res);
     }
+    deleteUser(req, res) {
+        userService.deleteUserById(req, res);
+    }
+    getAllUsers(req, res) {
+        userService.findAllUsers(req, res);
+    }
 }
 module.exports = new userController();
