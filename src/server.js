@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
-const appConfig = require('./config/appConf');
+const appDb = require('./config/appDatabase');
+const appConfig = require('./config/appConfig');
+
 require('dotenv').config();
 
 app.use(express.json());
@@ -9,8 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 const userRouter = require('./routes/authRoute');
 app.use('/api/auth/', userRouter);
 
-const connectDB = appConfig.connectDB;
-connectDB();
+appDb.connectDB();
 const port = appConfig.port;
 
 app.listen(port, () => {
