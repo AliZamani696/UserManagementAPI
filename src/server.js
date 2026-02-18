@@ -6,7 +6,7 @@ require('dotenv').config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const userRouter = require('./routes/userRoute');
+const userRouter = require('./routes/authRoute');
 app.use('/api/auth/', userRouter);
 
 const port = appConfig.port;
