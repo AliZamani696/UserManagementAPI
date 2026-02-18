@@ -8,8 +8,11 @@ require('dotenv').config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const userRouter = require('./routes/authRoute');
-app.use('/api/auth/', userRouter);
+const userRouter = require('./routes/userRoute');
+app.use('/api/users', userRouter);
+
+const authRouter = require('./routes/authRoute');
+app.use('/api/auth/', authRouter);
 
 appDb.connectDB();
 const port = appConfig.port;
