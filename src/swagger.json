@@ -1,0 +1,99 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "User Management API",
+    "version": "1.0.0",
+    "description": "مستندات مدیریت کاربران"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:9090",
+      "description": "سرور محلی"
+    }
+  ],
+  "paths": {
+    "/api/users/create-user": {
+      "post": {
+        "summary": "ایجاد کاربر جدید",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "reza_admin"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "reza@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "123456"
+                  }
+                },
+                "required": ["username", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "کاربر با موفقیت ایجاد شد"
+          },
+          "400": {
+            "description": "اطلاعات ارسالی ناقص است"
+          }
+        }
+      }
+    },
+    "/api/users/findUserWithUsername/{username}": {
+      "get": {
+        "summary": "جستجوی کاربر با نام کاربری",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "description": "نام کاربری را وارد کنید",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "اطلاعات کاربر دریافت شد"
+          }
+        }
+      }
+    },
+    "/api/users/findUserWithId/{id}": {
+      "get": {
+        "summary": "جستجوی کاربر با شناسه",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID کاربر را وارد کنید",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "موفق"
+          }
+        }
+      }
+    }
+  }
+}
