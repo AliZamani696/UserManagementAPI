@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "dotenv": "^17.3.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "nodemon": "^3.1.11"
   },
   "name": "usermanagementapi",
   "version": "1.0.0",
@@ -12,5 +13,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "prettier": "3.8.1"
+  }
 }
