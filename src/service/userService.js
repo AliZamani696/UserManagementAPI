@@ -4,7 +4,6 @@ class userService {
     async createNewUser(req, res) {
         try {
             const { name, username, email, password } = req.body;
-
             const newUser = new user({
                 name,
                 username,
@@ -30,12 +29,46 @@ class userService {
                 const messages = Object.values(error.errors).map(
                     (val) => val.message
                 );
-                return res.status(400).json({ message: messages });
+                return res.status(400).json({
+                    status: false,
+                    data: {
+                        message: messages,
+                    },
+                });
             }
             res.status(500).json({
                 message: 'خطای سرور',
                 error: error.message,
             });
+        }
+    }
+
+    async findUserByUsername(req, res) {
+        const { username } = req.params;
+        try {
+            const foundUser = await user
+                .findOne({ username })
+                .select('-password')
+                .select('-__v');
+
+            if (!foundUser) {
+                res.status(404).json({
+                    status: false,
+                    data: {
+                        message: `کاربری با این ${username}نام پیدا نشد.`,
+                    },
+                });
+            }
+            res.status(200).json({
+                status: true,
+                data: {
+                    user: {
+                        foundUser,
+                    },
+                },
+            });
+        } catch (error) {
+            console.error('خطا در جستجو:', error.message);
         }
     }
 }
