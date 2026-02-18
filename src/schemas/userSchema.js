@@ -41,12 +41,16 @@ const userSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+// چرا نباید یک نمک یکسان داشته باشیم چون اگه لو بره همه پسورد شکسته میشن به خاطر این از نمک های متفاوت استفاده میکنیم خوب اگه نمک متفاوت داشته باشیم که موقع لاگین به مشکل برمیخوریم؟
 userSchema.pre('save', async function () {
     if (!this.isModified('password')) return;
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });
 
+userSchema.methods.comparePassword = async function (candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
+};
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
