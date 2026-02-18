@@ -1,7 +1,7 @@
 
 node_modules/
 jspm_packages/
-
+./package.json/
 # Environment Variables (Secrets)
 .env
 .env.local

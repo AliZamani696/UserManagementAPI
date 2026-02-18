@@ -71,5 +71,33 @@ class userService {
             console.error('خطا در جستجو:', error.message);
         }
     }
+    async findByUserId(req, res) {
+        const { id } = req.params;
+        try {
+            const foundUser = await user
+                .findById(id)
+                .select('-password')
+                .select('-__v');
+
+            if (!foundUser) {
+                res.status(404).json({
+                    status: false,
+                    data: {
+                        message: `کاربری با این ${id}نام پیدا نشد.`,
+                    },
+                });
+            }
+            res.status(200).json({
+                status: true,
+                data: {
+                    user: {
+                        foundUser,
+                    },
+                },
+            });
+        } catch (error) {
+            console.error('خطا در جستجو:', error.message);
+        }
+    }
 }
 module.exports = new userService();

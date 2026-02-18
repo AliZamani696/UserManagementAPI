@@ -7,7 +7,7 @@ router.get(
     '/findUserWithUsername/:username',
     userController.findUserByUserName
 );
-// router.post('/', userController.findUserById);
+router.get('/findUserWithId/:id', userController.findByUserID);
 // router.post('/', userController.updateUser);
 // router.post('/', userController.deleteUser);
 // router.post('/', userController.getAllUsers);
