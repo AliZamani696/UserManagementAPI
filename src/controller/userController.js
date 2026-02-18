@@ -14,5 +14,8 @@ class userController {
     findByUserID(req, res) {
         userService.findByUserId(req, res);
     }
+    updateUser(req, res) {
+        userService.updateUserDetail(req, res);
+    }
 }
 module.exports = new userController();
