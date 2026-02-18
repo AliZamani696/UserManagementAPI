@@ -9,6 +9,8 @@ app.use(express.urlencoded({ extended: true }));
 const userRouter = require('./routes/authRoute');
 app.use('/api/auth/', userRouter);
 
+const connectDB = appConfig.connectDB;
+connectDB();
 const port = appConfig.port;
 
 app.listen(port, () => {
