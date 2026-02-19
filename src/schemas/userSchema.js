@@ -33,7 +33,11 @@ const userSchema = new mongoose.Schema(
             type: String,
             enum: ['user', 'admin'],
             required: true,
-            message: '{VALUE} is not supported',
+            message: '{VALUE} نقش وارد شده مجاز نمیباشد ',
+        },
+        tokenVersion: {
+            type: Number,
+            default: 0,
         },
     },
     {
