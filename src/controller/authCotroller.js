@@ -7,5 +7,11 @@ class authController {
     login(req, res) {
         authService.loginUser(req, res);
     }
+    logout(req, res) {
+        authService.logout(req, res);
+    }
+    refreshToken(req, res) {
+        authService.refreshToken(req, res);
+    }
 }
 module.exports = new authController();
