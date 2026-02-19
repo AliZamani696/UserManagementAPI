@@ -7,9 +7,10 @@ const appConfig = require('./config/appConfig');
 const swaggerDocument = require('./swagger.json');
 // app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 const cookieParser = require('cookie-parser');
-
+const morgan = require('morgan');
 require('dotenv').config();
 
+app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
