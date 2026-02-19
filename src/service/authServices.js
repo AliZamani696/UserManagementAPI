@@ -95,7 +95,7 @@ class authService {
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 روز
             });
 
-            return res.status(201).json({
+            return res.status(200).json({
                 status: true,
                 data: {
                     user: {
