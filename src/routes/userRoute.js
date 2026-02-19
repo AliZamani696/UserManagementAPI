@@ -2,8 +2,14 @@ const express = require('express');
 const router = express.Router();
 const userController = require('./../controller/userController');
 const authMiddleware = require('./../middleware/authMiddleware');
+const authValidator = require('./../validators/authValidator');
 
-router.post('/create-user', authMiddleware('admin'), userController.createUser);
+router.post(
+    '/create-user',
+    authMiddleware('admin'),
+    authValidator.registerValidation(),
+    userController.createUser
+);
 router.get(
     '/findUserWithUsername/:username',
     authMiddleware('admin'),
