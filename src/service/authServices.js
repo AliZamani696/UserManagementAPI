@@ -1,9 +1,10 @@
 const user = require('./../schemas/userSchema');
+const generateToken = require('./../utils/generateToken');
 
 class authService {
     async registerUser(req, res) {
         try {
-            const { name, username, email, password } = req.body;
+            const { name, username, email, password, role } = req.body;
 
             const existingUser = await user.findOne({
                 email: email.toLowerCase(),
@@ -20,19 +21,19 @@ class authService {
                 username,
                 email,
                 password,
+                role,
             });
-
-            // const token = signToken(newUser._id);
-
+            const token = generateToken(newUser);
             res.status(201).json({
                 status: true,
-                // token,
+                token,
                 message: 'ثبت‌نام با موفقیت انجام شد',
             });
         } catch (error) {
             res.status(400).json({ status: false, message: error.message });
         }
     }
+
     async loginUser(req, res) {
         try {
             const { email, password } = req.body;
@@ -51,11 +52,10 @@ class authService {
                     message: 'ایمیل یا رمز عبور اشتباه است',
                 });
             }
-
-            // const token = signToken(user._id);
+            const token = generateToken(User);
             res.status(200).json({
                 status: true,
-                // token,
+                token,
                 message: `خوش آمدید ${User.name}`,
             });
         } catch (error) {

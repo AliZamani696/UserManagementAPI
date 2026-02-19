@@ -3,12 +3,13 @@ const user = require('./../schemas/userSchema');
 class userService {
     async createNewUser(req, res) {
         try {
-            const { name, username, email, password } = req.body;
+            const { name, username, email, password, role } = req.body;
             const newUser = new user({
                 name,
                 username,
                 email,
                 password,
+                role,
             });
             const savedUser = await newUser.save();
             res.status(201).json({
@@ -48,8 +49,8 @@ class userService {
         try {
             const foundUser = await user
                 .findOne({ username })
-                .select('-password')
-                .select('-__v');
+                .select('-password -__v -role');
+            // .select('-__v');
 
             if (!foundUser) {
                 res.status(404).json({
