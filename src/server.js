@@ -6,10 +6,13 @@ const swaggerSpecs = require('./swaggerConfig/swaggerConfig');
 const appConfig = require('./config/appConfig');
 const swaggerDocument = require('./swagger.json');
 // app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+const cookieParser = require('cookie-parser');
 
 require('dotenv').config();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const userRouter = require('./routes/userRoute');
 app.use('/api/users', userRouter);
