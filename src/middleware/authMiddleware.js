@@ -17,10 +17,13 @@ const authMiddleware = (...roles) => {
 
             const decoded = jwt.verify(
                 token,
+                // process.env.JWT_ACCESS_SECRET
                 '0698dbaf55aa108e77dd8013276c4e0f751d2854b26101b9233277bfcbf937bf'
             );
 
-            const User = await user.findById(decoded.id).select('-password');
+            const User = await user
+                .findById(decoded.id)
+                .select('-password -__v');
 
             if (!User) {
                 return res.status(401).json({
@@ -28,17 +31,20 @@ const authMiddleware = (...roles) => {
                     message: 'کاربر یافت نشد',
                 });
             }
-
+            if (decoded.tokenVersion !== User.tokenVersion) {
+                return res.status(401).json({
+                    status: false,
+                    message: 'توکن باطل شده است، لطفاً دوباره وارد شوید',
+                });
+            }
             req.user = User;
 
-            // ✅ چک کردن Role
             if (roles.length > 0 && !roles.includes(User.role)) {
                 return res.status(403).json({
                     status: false,
                     message: 'شما دسترسی لازم را ندارید',
                 });
             }
-
             next();
         } catch (error) {
             return res.status(401).json({
