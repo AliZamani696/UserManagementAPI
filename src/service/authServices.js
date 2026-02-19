@@ -5,6 +5,7 @@ const {
 } = require('./../utils/generateToken');
 const redisClient = require('./../config/redis');
 const jwt = require('jsonwebtoken');
+const appConfig = require('./../config/appConfig');
 
 class authService {
     async registerUser(req, res) {
@@ -192,6 +193,71 @@ class authService {
             return res.status(500).json({
                 status: false,
                 message: 'خطای سرور',
+            });
+        }
+    }
+    async forgetPassword(req, res) {
+        try {
+            const { email } = req.body;
+            const User = await user.findOne({ email });
+            if (!User) {
+                return res.status(404).json({
+                    status: false,
+                    message: 'کاربری با این ایمیل وجود ندارد',
+                });
+            }
+
+            const resetToken = User.createPasswordResetToken();
+            await User.save({ validateBeforeSave: false });
+            const port = appConfig.port;
+
+            res.status(200).json({
+                status: true,
+                message: 'لینک بازیابی رمز ارسال شد',
+                resetPassToken: resetToken,
+            });
+        } catch (error) {
+            res.status(500).json({
+                status: false,
+                message: error.message,
+            });
+        }
+    }
+    async restPassword(req, res) {
+        try {
+            const hashedToken = require('crypto')
+                .createHash('sha256')
+                .update(req.params.token)
+                .digest('hex');
+
+            const User = await user.findOne({
+                resetPasswordToken: hashedToken,
+                resetPasswordExpire: { $gt: Date.now() },
+            });
+
+            if (!User) {
+                return res.status(400).json({
+                    status: false,
+                    message: 'توکن نامعتبر یا منقضی شده',
+                });
+            }
+
+            User.password = req.body.password;
+            User.resetPasswordToken = undefined;
+            User.resetPasswordExpire = undefined;
+
+            User.tokenVersion += 1; // invalidate همه JWT ها
+
+            await User.save();
+
+            res.status(200).json({
+                status: true,
+                message: 'رمز عبور با موفقیت تغییر کرد',
+            });
+        } catch (error) {
+            res.status(500).json({
+                status: false,
+                message: error.message,
             });
         }
     }

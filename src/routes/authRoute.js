@@ -5,19 +5,20 @@ const authValidator = require('./../validators/authValidator');
 const authMiddleware = require('./../middleware/authMiddleware');
 const limiter = require('../middleware/limiterMiddleware');
 
-router.post('/refresh', authMiddleware(), authController.refreshToken);
+router.post('/refresh', authMiddleware(), authController.authRefreshToken);
 router.post(
     '/login',
     limiter,
     authValidator.loginValidation(),
-    authController.login
+    authController.authLogin
 );
 router.post(
     '/register',
     limiter,
     authValidator.registerValidation(),
-    authController.register
+    authController.authRegister
 );
-router.post('/logout', limiter, authController.logout);
-
+router.post('/logout', limiter, authController.authLogout);
+router.post('/forget-password', authController.authForgetPassword);
+router.patch('/reset-password/:token', authController.authRestPassword);
 module.exports = router;

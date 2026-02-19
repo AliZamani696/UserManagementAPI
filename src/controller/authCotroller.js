@@ -1,17 +1,23 @@
 const authService = require('../service/authServices');
 
 class authController {
-    register(req, res) {
+    authRegister(req, res) {
         authService.registerUser(req, res);
     }
-    login(req, res) {
+    authLogin(req, res) {
         authService.loginUser(req, res);
     }
-    logout(req, res) {
+    authLogout(req, res) {
         authService.logout(req, res);
     }
-    refreshToken(req, res) {
+    authRefreshToken(req, res) {
         authService.refreshToken(req, res);
+    }
+    authForgetPassword(req, res) {
+        authService.forgetPassword(req, res);
+    }
+    authRestPassword(req, res) {
+        authService.restPassword(req, res);
     }
 }
 module.exports = new authController();
