@@ -5,11 +5,11 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./swaggerConfig/swaggerConfig');
 const appConfig = require('./config/appConfig');
 const swaggerDocument = require('./swagger.json');
-// app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 require('dotenv').config();
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -25,6 +25,6 @@ appDb.connectDB();
 const port = appConfig.port;
 
 app.listen(port, () => {
-  console.log('Server is running on http://localhost:3000');
-  console.log('Swagger docs available at http://localhost:3000/api-docs');
+  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Swagger docs available at http://localhost:${port}/api-docs`);
 });

@@ -1,98 +1,193 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "User Management API",
+    "title": "User & Auth Management API",
     "version": "1.0.0",
-    "description": "مستندات مدیریت کاربران"
+    "description": "مستندات کامل سیستم احراز هویت و مدیریت کاربران پروژه شما"
   },
   "servers": [
     {
-      "url": "http://localhost:9090",
-      "description": "سرور محلی"
+      "url": "http://localhost:9090/api",
+      "description": "سرور محلی (Base URL)"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "username": { "type": "string" },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "role": { "type": "string" }
+        }
+      }
+    }
+  },
   "paths": {
-    "/api/users/create-user": {
+    "/auth/register": {
       "post": {
-        "summary": "ایجاد کاربر جدید",
-        "tags": ["Users"],
+        "tags": ["Authentication"],
+        "summary": "ثبت‌نام کاربر جدید",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["name", "username", "email", "password"],
                 "properties": {
-                  "username": {
-                    "type": "string",
-                    "example": "reza_admin"
-                  },
-                  "email": {
-                    "type": "string",
-                    "example": "reza@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "123456"
-                  }
-                },
-                "required": ["username", "email", "password"]
+                  "name": { "type": "string", "example": "علی علوی" },
+                  "username": { "type": "string", "example": "ali_dev" },
+                  "email": { "type": "string", "example": "ali@example.com" },
+                  "password": { "type": "string", "example": "Pass123!@#" },
+                  "role": { "type": "string", "default": "user" }
+                }
               }
             }
           }
         },
-        "responses": {
-          "201": {
-            "description": "کاربر با موفقیت ایجاد شد"
-          },
-          "400": {
-            "description": "اطلاعات ارسالی ناقص است"
-          }
-        }
+        "responses": { "201": { "description": "ثبت‌نام موفق" } }
       }
     },
-    "/api/users/findUserWithUsername/{username}": {
-      "get": {
-        "summary": "جستجوی کاربر با نام کاربری",
-        "tags": ["Users"],
-        "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "description": "نام کاربری را وارد کنید",
-            "schema": {
-              "type": "string"
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "ورود به حساب کاربری",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "example": "ali@example.com" },
+                  "password": { "type": "string", "example": "Pass123!@#" }
+                }
+              }
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "اطلاعات کاربر دریافت شد"
-          }
-        }
+        },
+        "responses": { "200": { "description": "ورود موفق" } }
       }
     },
-    "/api/users/findUserWithId/{id}": {
+    "/auth/refresh": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "تمدید Access Token",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "توکن جدید صادر شد" } }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "خروج از حساب",
+        "responses": { "200": { "description": "خروج موفق" } }
+      }
+    },
+    "/auth/forget-password": {
+      "post": {
+        "tags": ["Password Management"],
+        "summary": "فراموشی رمز عبور",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "properties": { "email": { "type": "string" } } } } }
+        },
+        "responses": { "200": { "description": "لینک بازیابی ارسال شد" } }
+      }
+    },
+    "/auth/reset-password/{token}": {
+      "patch": {
+        "tags": ["Password Management"],
+        "summary": "تنظیم رمز جدید با توکن",
+        "parameters": [{ "name": "token", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "properties": { "password": { "type": "string" } } } } }
+        },
+        "responses": { "200": { "description": "رمز تغییر کرد" } }
+      }
+    },
+    "/users/allUsers": {
       "get": {
-        "summary": "جستجوی کاربر با شناسه",
-        "tags": ["Users"],
+        "tags": ["Admin - Users"],
+        "summary": "لیست تمامی کاربران (فقط ادمین)",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "ID کاربر را وارد کنید",
-            "schema": {
-              "type": "string"
-            }
-          }
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } }
         ],
-        "responses": {
-          "200": {
-            "description": "موفق"
-          }
-        }
+        "responses": { "200": { "description": "موفق" } }
+      }
+    },
+    "/users/findUserWithUsername/{username}": {
+      "get": {
+        "tags": ["User Profile"],
+        "summary": "جستجو با نام کاربری",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "username", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "کاربر یافت شد" } }
+      }
+    },
+    "/users/findUserWithId/{id}": {
+      "get": {
+        "tags": ["Admin - Users"],
+        "summary": "یافتن کاربر با شناسه",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "موفق" } }
+      }
+    },
+    "/users/profile/{id}": {
+      "get": {
+        "tags": ["User Profile"],
+        "summary": "مشاهده پروفایل و آمار روزهای عضویت",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "اطلاعات پروفایل دریافت شد" } }
+      }
+    },
+    "/users/updateUser/{id}": {
+      "put": {
+        "tags": ["Admin - Users"],
+        "summary": "بروزرسانی اطلاعات کاربر (ادمین)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "properties": { "name": { "type": "string" }, "username": { "type": "string" },"email":{"type":"string"} } } } }
+        },
+        "responses": { "200": { "description": "بروزرسانی موفق" } }
+      }
+    },
+    "/users/updateUserProfile/{id}": {
+      "put": {
+        "tags": ["User Profile"],
+        "summary": "بروزرسانی پروفایل توسط خود کاربر",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "properties": { "name": { "type": "string" }, "username": { "type": "string" } ,"email":{"type":"string"}} } } }
+        },
+        "responses": { "200": { "description": "بروزرسانی موفق" } }
+      }
+    },
+    "/users/deleteUser/{id}": {
+      "delete": {
+        "tags": ["Admin - Users"],
+        "summary": "حذف کاربر",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "کاربر حذف شد" } }
       }
     }
   }
