@@ -23,9 +23,7 @@ class userController {
                 });
             }
             if (error.name === 'ValidationError') {
-                const messages = Object.values(error.errors).map(
-                    (val) => val.message
-                );
+                const messages = Object.values(error.errors).map((val) => val.message);
                 return res.status(400).json({
                     status: false,
                     data: {
@@ -49,9 +47,10 @@ class userController {
                 },
             });
         } catch (error) {
-            return res
-                .status(400)
-                .json({ message: 'خطا در جستجو:', error: error.message });
+            return res.status(400).json({
+                message: 'خطا در جستجو:',
+                error: error.message,
+            });
         }
     }
     async findByUserID(req, res) {
@@ -66,9 +65,10 @@ class userController {
                 },
             });
         } catch (error) {
-            return res
-                .status(400)
-                .json({ message: 'خطا در جستجو:', error: error.message });
+            return res.status(400).json({
+                message: 'خطا در جستجو:',
+                error: error.message,
+            });
         }
     }
     async updateUser(req, res) {
@@ -81,20 +81,16 @@ class userController {
                     user: result,
                 },
             });
-            console.log(result);
         } catch (error) {
             if (error.code === 11000) {
                 return res.status(400).json({
                     status: false,
-                    message:
-                        'نام، نام کاربری یا ایمیل وارد شده قبلاً توسط شخص دیگری ثبت شده است.',
+                    message: 'نام، نام کاربری یا ایمیل وارد شده قبلاً توسط شخص دیگری ثبت شده است.',
                 });
             }
 
             if (error.name === 'ValidationError') {
-                const messages = Object.values(error.errors).map(
-                    (val) => val.message
-                );
+                const messages = Object.values(error.errors).map((val) => val.message);
                 return res.status(400).json({
                     status: false,
                     message: messages,
@@ -135,8 +131,7 @@ class userController {
                     totalUsers: result.totalUsers,
                     totalPages: result.totalPages,
                     currentPage: (result.currentPage = result.page),
-                    hasNextPage: (result.hasNextPage =
-                        result.page < result.totalPages),
+                    hasNextPage: (result.hasNextPage = result.page < result.totalPages),
                     hasPrevPage: (result.hasPrevPage = result.page > 1),
                 },
                 data: { result },

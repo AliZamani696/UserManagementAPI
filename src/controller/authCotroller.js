@@ -1,10 +1,17 @@
 const authService = require('../service/authServices');
+const { validationResult } = require('express-validator');
 
 class authController {
     async authRegister(req, res) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    status: false,
+                    errors: errors.array().map((err) => err.msg),
+                });
+            }
             const userData = req.body;
-
             const result = await authService.registerUser(userData);
 
             res.cookie('refreshToken', result.refreshToken, {
@@ -31,6 +38,13 @@ class authController {
 
     async authLogin(req, res) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    status: false,
+                    errors: errors.array().map((err) => err.msg),
+                });
+            }
             const result = await authService.loginUser(req.body);
 
             res.cookie('refreshToken', result.refreshToken, {
@@ -57,7 +71,8 @@ class authController {
     async authRefreshToken(req, res) {
         try {
             const refreshToken = req.cookies.refreshToken;
-            const result = await authService.refreshToken(refreshToken);
+            const result =
+                await authService.refreshToken(refreshToken);
 
             return res.status(200).json({
                 status: true,
@@ -85,15 +100,18 @@ class authController {
             });
         } catch (error) {
             const statusCode = error.statusCode || 500;
-            return res
-                .status(statusCode)
-                .json({ status: false, message: error.message || 'خطای سرور' });
+            return res.status(statusCode).json({
+                status: false,
+                message: error.message || 'خطای سرور',
+            });
         }
     }
 
     async authForgetPassword(req, res) {
         try {
-            const result = await authService.forgetPassword(req.body.email);
+            const result = await authService.forgetPassword(
+                req.body.email
+            );
 
             return res.status(200).json({
                 status: true,

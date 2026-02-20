@@ -9,13 +9,11 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: [true, 'نام  اجباری است'],
             unique: true,
-            trim: true,
         },
         username: {
             type: String,
             required: [true, 'نام کاربری اجباری است'],
             unique: true,
-            trim: true,
             lowercase: true,
         },
         email: {
@@ -35,6 +33,7 @@ const userSchema = new mongoose.Schema(
             enum: ['user', 'admin'],
             required: true,
             message: '{VALUE} نقش وارد شده مجاز نمیباشد ',
+            default: 'user',
         },
         tokenVersion: {
             type: Number,
@@ -44,11 +43,10 @@ const userSchema = new mongoose.Schema(
         resetPasswordExpire: Date,
     },
     {
-        // when add this field by default create at is now!
         timestamps: true,
     }
 );
-// چرا نباید یک نمک یکسان داشته باشیم چون اگه لو بره همه پسورد شکسته میشن به خاطر این از نمک های متفاوت استفاده میکنیم خوب اگه نمک متفاوت داشته باشیم که موقع لاگین به مشکل برمیخوریم؟
+
 userSchema.pre('save', async function () {
     if (!this.isModified('password')) return;
     const salt = await bcrypt.genSalt(10);
@@ -67,7 +65,7 @@ userSchema.methods.createPasswordResetToken = function () {
         .update(resetToken)
         .digest('hex');
 
-    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 دقیقه
+    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
 
     return resetToken;
 };

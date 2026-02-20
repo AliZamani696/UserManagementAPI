@@ -1,7 +1,8 @@
 const { body } = require('express-validator');
+const { validationResult } = require('express-validator');
 
 class authValidator {
-    registerValidation() {
+    static registerValidation() {
         return [
             body('name')
                 .notEmpty()
@@ -23,10 +24,19 @@ class authValidator {
                 .normalizeEmail(),
 
             body('password')
-                .notEmpty()
-                .withMessage('رمز عبور الزامی است')
-                .isLength({ min: 6 })
-                .withMessage('رمز عبور باید حداقل 6 کاراکتر باشد'),
+                .isLength({ min: 8 })
+                .withMessage('پسورد باید حداقل ۸ کاراکتر باشد')
+                .matches(/[A-Z]/)
+                .withMessage('پسورد باید حداقل شامل یک حرف بزرگ باشد')
+                .matches(/[a-z]/)
+                .withMessage('پسورد باید حداقل شامل یک حرف کوچک باشد')
+                .matches(/[0-9]/)
+                .withMessage('پسورد باید حداقل شامل یک عدد باشد')
+                .matches(/[!@#$%^&*]/)
+                .withMessage(
+                    'پسورد باید شامل حداقل یک کاراکتر خاص باشد'
+                ),
+
             body('role')
                 .notEmpty()
                 .withMessage('هیچ نقشی برای کاربر در نظر گرفته نشده')
@@ -35,7 +45,7 @@ class authValidator {
         ];
     }
 
-    loginValidation() {
+    static loginValidation() {
         return [
             body('email')
                 .notEmpty()
@@ -45,12 +55,20 @@ class authValidator {
                 .normalizeEmail(),
 
             body('password')
-                .notEmpty()
-                .withMessage('رمز عبور الزامی است')
-                .isLength({ min: 6 })
-                .withMessage('رمز عبور بیش از حد مجاز کوتاه میباشد'),
+                .isLength({ min: 8 })
+                .withMessage('پسورد باید حداقل ۸ کاراکتر باشد')
+                .matches(/[A-Z]/)
+                .withMessage('پسورد باید حداقل شامل یک حرف بزرگ باشد')
+                .matches(/[a-z]/)
+                .withMessage('پسورد باید حداقل شامل یک حرف کوچک باشد')
+                .matches(/[0-9]/)
+                .withMessage('پسورد باید حداقل شامل یک عدد باشد')
+                .matches(/[!@#$%^&*]/)
+                .withMessage(
+                    'پسورد باید شامل حداقل یک کاراکتر خاص باشد'
+                ),
         ];
     }
 }
 
-module.exports = new authValidator();
+module.exports = authValidator;

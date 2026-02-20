@@ -25,5 +25,6 @@ appDb.connectDB();
 const port = appConfig.port;
 
 app.listen(port, () => {
-    console.log('server is running', port);
+    console.log('Server is running on http://localhost:3000');
+    console.log('Swagger docs available at http://localhost:3000/api-docs');
 });
