@@ -5,7 +5,7 @@ const authValidator = require('./../validators/authValidator');
 const authMiddleware = require('./../middleware/authMiddleware');
 const limiter = require('../middleware/limiterMiddleware');
 
-router.post('/refresh', authMiddleware(), authController.authRefreshToken);
+router.post('/refresh', limiter, authMiddleware(), authController.authRefreshToken);
 router.post('/login', limiter, authValidator.loginValidation(), authController.authLogin);
 router.post('/register', limiter, authValidator.registerValidation(), authController.authRegister);
 router.post('/logout', limiter, authController.authLogout);

@@ -12,6 +12,7 @@ const generateToken = (user) => {
     {
       expiresIn: '15m',
     }
+    // برای توکن های کوتاه مدت از JWT_ACCESS_SECRET
     //     process.env.JWT_ACCESS_SECRET,
     // { expiresIn: process.env.JWT_ACCESS_EXPIRES }
   );

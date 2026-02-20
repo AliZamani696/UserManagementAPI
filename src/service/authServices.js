@@ -120,11 +120,11 @@ class authService {
       error.statusCode = 400;
       throw error;
     }
-
-    const decoded = jwt.verify(currentRefreshToken, process.env.JWT_REFRESH_SECRET);
+    const decoded = jwt.verify(currentRefreshToken, '0698dbaf55aa108e77dd8013276c4e0f751d2854b26101b9233277bfcbf937bf');
+    // const decoded = jwt.verify(currentRefreshToken, process.env.JWT_REFRESH_SECRET);
     await redisClient.del(`refresh:${decoded.id}`);
 
-    return true; // فقط تایید می‌کنیم که عملیات موفق بود
+    return true;
   }
 
   async forgetPassword(email) {
@@ -137,8 +137,6 @@ class authService {
 
     const resetToken = User.createPasswordResetToken();
     await User.save({ validateBeforeSave: false });
-
-    // اینجا می‌توانید منطق ارسال ایمیل را هم صدا بزنید
     return { resetToken };
   }
 
