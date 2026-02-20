@@ -4,7 +4,6 @@ const config = require('./appConfig');
 class AppDatabase {
   connectDB = async () => {
     try {
-      console.log('در حال تلاش برای اتصال به دیتابیس...');
       await mongoose.connect(config.dbUri, {
         serverSelectionTimeoutMS: 5000,
       });

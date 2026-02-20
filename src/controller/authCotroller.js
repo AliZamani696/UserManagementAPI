@@ -11,6 +11,7 @@ class authController {
           errors: errors.array().map((err) => err.msg),
         });
       }
+
       const userData = req.body;
       const result = await authService.registerUser(userData);
 
@@ -49,7 +50,7 @@ class authController {
 
       res.cookie('refreshToken', result.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: false,
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
@@ -62,7 +63,7 @@ class authController {
       });
     } catch (error) {
       const statusCode = error.statusCode || 500;
-      return res.status(statusCode).json({ status: false, message: error.message });
+      return res.status(statusCode).json({ status: false, message: error.message + 'خطای سرور' });
     }
   }
 
@@ -78,7 +79,7 @@ class authController {
       });
     } catch (error) {
       const statusCode = error.statusCode || 403;
-      return res.status(statusCode).json({ status: false, message: error.message });
+      return res.status(statusCode).json({ status: false, message: error.message + 'خطای سرور' });
     }
   }
 
@@ -97,7 +98,7 @@ class authController {
       const statusCode = error.statusCode || 500;
       return res.status(statusCode).json({
         status: false,
-        message: error.message || 'خطای سرور',
+        message: error.message + 'خطای سرور',
       });
     }
   }
@@ -115,7 +116,8 @@ class authController {
       const statusCode = error.statusCode || 500;
       return res.status(statusCode).json({
         status: false,
-        message: error.message,
+        //برای دیباگ پیام خطا رو برمیگردونم
+        message: error.message + 'خطای سرور',
       });
     }
   }
@@ -132,7 +134,7 @@ class authController {
       const statusCode = error.statusCode || 500;
       return res.status(statusCode).json({
         status: false,
-        message: error.message,
+        message: error.message + 'خطای سرور',
       });
     }
   }
