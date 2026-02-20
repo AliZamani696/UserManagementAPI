@@ -19,6 +19,10 @@ router.post(
     authController.authRegister
 );
 router.post('/logout', limiter, authController.authLogout);
-router.post('/forget-password', authController.authForgetPassword);
-router.patch('/reset-password/:token', authController.authRestPassword);
+router.post('/forget-password', limiter, authController.authForgetPassword);
+router.patch(
+    '/reset-password/:token',
+    limiter,
+    authController.authResetPassword
+);
 module.exports = router;
