@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management API · Authentication & RBAC</title>
+  <!-- Bootstrap 5 darkly theme (custom dark) + icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Google Fonts for a modern touch -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #0b0f1a;
+      color: #e0e4f0;
+    }
+    .navbar, .footer {
+      background-color: #0e1320 !important;
+      backdrop-filter: blur(6px);
+    }
+    .navbar-brand {
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .hero {
+      padding: 5rem 0 3rem 0;
+      background: radial-gradient(ellipse at 70% 30%, #1a2340, #0b0f1a 70%);
+    }
+    .hero h1 {
+      font-weight: 700;
+      background: linear-gradient(145deg, #a6c1ff, #d6e0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .badge-soft {
+      background: rgba(90, 120, 255, 0.15);
+      color: #b0c8ff;
+      padding: 0.35rem 0.8rem;
+      border-radius: 30px;
+      font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .card-bg {
+      background-color: #131b2c;
+      border: 1px solid #2a3450;
+      border-radius: 24px;
+      backdrop-filter: blur(4px);
+      transition: transform 0.2s ease, border-color 0.2s;
+    }
+    .card-bg:hover {
+      border-color: #4f6b9e;
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      font-size: 2rem;
+      color: #7f9ef5;
+      background: rgba(25, 40, 75, 0.6);
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      border: 1px solid #3d506e;
+    }
+    .tech-badge {
+      background: #1e2a3a;
+      color: #bdd3ff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 1rem;
+      border: 1px solid #314b6e;
+      transition: all 0.2s;
+    }
+    .tech-badge:hover {
+      background: #27415e;
+      color: white;
+      border-color: #6c8ed4;
+    }
+    .folder-structure {
+      background-color: #0f1824;
+      border-radius: 24px;
+      border: 1px solid #2f3d5a;
+      padding: 1.5rem;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.9rem;
+    }
+    .folder-structure pre {
+      margin: 0;
+      color: #c9d7f8;
+    }
+    .keyword { color: #79b8ff; }  /* light blue */
+    .comment { color: #7a8eb0; }  /* grey */
+    .divider-light {
+      border-color: #2a3455;
+      opacity: 0.5;
+    }
+    .btn-outline-glow {
+      border: 1px solid #4f6190;
+      color: #e0e8ff;
+      border-radius: 40px;
+      padding: 0.6rem 1.8rem;
+      transition: 0.2s;
+    }
+    .btn-outline-glow:hover {
+      background: #1f2c48;
+      border-color: #7e9df5;
+      color: white;
+      box-shadow: 0 0 15px #3f63c0;
+    }
+    .btn-glow {
+      background: #2b3f7a;
+      border: none;
+      border-radius: 40px;
+      padding: 0.6rem 2rem;
+      font-weight: 600;
+      color: white;
+      transition: 0.2s;
+    }
+    .btn-glow:hover {
+      background: #3f5bb5;
+      box-shadow: 0 0 20px #4a70d4;
+    }
+    .text-accent {
+      color: #9bb6ff;
+    }
+    .bg-deep {
+      background-color: #0c111d;
+    }
+  </style>
+</head>
+<body class="bg-deep">
+
+  <!-- NAVBAR (dark, advanced) -->
+  <nav class="navbar navbar-expand-lg navbar-dark py-3 sticky-top" style="background-color: #0a0f1a; border-bottom: 1px solid #1f2a44;">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="bi bi-shield-lock-fill me-2" style="color: #6d8cff;"></i>User<span class="text-accent">Management</span>API
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+          <li class="nav-item"><a class="nav-link px-3" href="#features">ویژگی‌ها</a></li> <!-- Persian in nav -->
+          <li class="nav-item"><a class="nav-link px-3" href="#tech">Tech stack</a></li>
+          <li class="nav-item"><a class="nav-link px-3" href="#structure">Structure</a></li>
+          <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+            <a class="btn btn-outline-glow btn-sm" href="https://github.com/AliZamani696/UserManagementAPI"><i class="bi bi-github me-2"></i>GitHub</a>
+          </li>
+          <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+            <a class="btn btn-glow btn-sm" href="https://github.com/AliZamani696/UserManagementAPI"><i class="bi bi-book me-2"></i>Docs</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION (bilingual) -->
+  <section class="hero">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-8">
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge-soft"><i class="bi bi-check-circle-fill me-1 text-success"></i> v2.1.0</span>
+            <span class="badge-soft"><i class="bi bi-translate me-1"></i> EN / فارسی</span>
+            <span class="badge-soft"><i class="bi bi-database me-1"></i> MongoDB + Redis</span>
+          </div>
+          <h1 class="display-4 fw-bold mb-3">User Management API <br><span style="font-size: 2rem; color: #b5c8ff;">وب‌سرویس مدیریت کاربران با احراز هویت</span></h1>
+          <p class="lead mb-4 text-light-emphasis">یک API یکپارچه و امن برای احراز هویت، مدیریت کاربران و سطوح دسترسی. <br class="d-none d-md-block">Built with Node.js, Express, JWT, Redis & layered architecture.</p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="#" class="btn btn-glow btn-lg px-4"><i class="bi bi-play-circle me-2"></i>Quick start</a>
+            <a href="#" class="btn btn-outline-glow btn-lg px-4"><i class="bi bi-file-code me-2"></i>API reference</a>
+            <span class="align-self-center ms-2 text-secondary">
+              <i class="bi bi-star-fill text-warning me-1"></i> 230+ stars
+            </span>
+          </div>
+          <div class="mt-4 text-secondary small">
+            <i class="bi bi-shield-check me-1"></i> JWT · bcrypt · RBAC · rate limiting · global error handling
+          </div>
+        </div>
+        <div class="col-lg-4 d-none d-lg-block text-center">
+          <div class="card-bg p-4">
+            <i class="bi bi-key-fill" style="font-size: 3.5rem; color: #6f92ff;"></i>
+            <h5 class="mt-3">secure by design</h5>
+            <p class="small text-secondary">passwords hashed + redis token blacklist</p>
+            <hr class="divider-light">
+            <div class="d-flex justify-content-around">
+              <div><i class="bi bi-person-badge"></i> user/admin</div>
+              <div><i class="bi bi-hdd-stack"></i> mongoose</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES (advanced cards) -->
+  <section id="features" class="py-5">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="badge-soft"><i class="bi bi-magic me-1"></i> core capabilities</span>
+        <h2 class="display-5 fw-semibold mt-2">ویژگی‌های پیشرفته <span style="color: #6e8eff;">· features</span></h2>
+        <p class="text-secondary col-lg-6 mx-auto">همه‌چیز برای مدیریت کاربران در مقیاس تولید، از احراز هویت تا کنترل دسترسی.</p>
+      </div>
+      <div class="row g-4">
+        <!-- feature 1: registration/login -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card-bg p-4 h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-person-plus-fill"></i></div>
+            <h5 class="fw-semibold">ثبت‌نام و ورود امن</h5>
+            <p class="text-secondary small">هش کردن رمز عبور با bcrypt قبل از ذخیره، اعتبارسنجی ورودی و تولید توکن‌های JWT.</p>
+          </div>
+        </div>
+        <!-- feature 2: JWT + Redis -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card-bg p-4 h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-cloud-check-fill"></i></div>
+            <h5 class="fw-semibold">JWT + Redis cache</h5>
+            <p class="text-secondary small">توکن‌ها در Redis کش و بلک‌لیست می‌شوند. افزایش امنیت و امکان خروج از همه دستگاه‌ها.</p>
+          </div>
+        </div>
+        <!-- feature 3: RBAC -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card-bg p-4 h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-diagram-3-fill"></i></div>
+            <h5 class="fw-semibold">کنترل دسترسی (RBAC)</h5>
+            <p class="text-secondary small">نقش‌های <code>user</code> و <code>admin</code> با میدلورهای محافظت از مسیرها. قابل گسترش.</p>
+          </div>
+        </div>
+        <!-- feature 4: validation -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card-bg p-4 h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-input-cursor-text"></i></div>
+            <h5 class="fw-semibold">اعتبارسنجی داده‌ها</h5>
+            <p class="text-secondary small">با <code>express-validator</code> ورودی‌ها پیش از رسیدن به کنترلر بررسی می‌شوند.</p>
+          </div>
+        </div>
+        <!-- feature 5: layered architecture -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card-bg p-4 h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-layers-fill"></i></div>
+            <h5 class="fw-semibold">معماری لایه‌بندی شده</h5>
+            <p class="text-secondary small">Routes, Controllers, Services, Models – کد تمیز و قابلیت نگهداری بالا.</p>
+          </div>
+        </div>
+        <!-- feature 6: global error handling -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card-bg p-4 h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-exclamation-triangle-fill"></i></div>
+            <h5 class="fw-semibold">مدیریت خطای سراسری</h5>
+            <p class="text-secondary small">یکپارچه‌سازی خطاها با پاسخ‌های استاندارد و لاگ‌گیری مناسب.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK (badges / icons) -->
+  <section id="tech" class="py-5 bg-deep" style="border-top: 1px solid #202b44; border-bottom: 1px solid #202b44;">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="badge-soft"><i class="bi bi-cpu me-1"></i> stack</span>
+        <h2 class="display-5 fw-semibold mt-2">تکنولوژی‌های استفاده شده <span style="color: #6e8eff;">· tech stack</span></h2>
+      </div>
+      <div class="d-flex flex-wrap justify-content-center gap-3 mb-2">
+        <span class="tech-badge"><i class="bi bi-nodejs me-2"></i>Node.js</span>
+        <span class="tech-badge"><i class="bi bi-file-earmark-code-fill me-2"></i>Express</span>
+        <span class="tech-badge"><i class="bi bi-database-fill me-2"></i>MongoDB + Mongoose</span>
+        <span class="tech-badge"><i class="bi bi-key-fill me-2"></i>JWT</span>
+        <span class="tech-badge"><i class="bi bi-shield-fill-check me-2"></i>bcrypt</span>
+        <span class="tech-badge"><i class="bi bi-lightning-charge-fill me-2"></i>Redis</span>
+        <span class="tech-badge"><i class="bi bi-check2-square me-2"></i>express-validator</span>
+      </div>
+      <p class="text-center text-secondary small mt-4">کش کردن توکن‌ها با Redis · هش کردن رمزها · کنترل سطح دسترسی</p>
+    </div>
+  </section>
+
+  <!-- PROJECT STRUCTURE (folder tree) -->
+  <section id="structure" class="py-5">
+    <div class="container">
+      <div class="row align-items-start">
+        <div class="col-lg-6">
+          <span class="badge-soft"><i class="bi bi-folder-symlink-fill me-1"></i> structure</span>
+          <h2 class="display-6 fw-semibold mt-2 mb-3">ساختار پروژه <span class="text-accent">· project structure</span></h2>
+          <p class="text-secondary">معماری تمیز و لایه‌بندی شده بر اساس <strong>Controller-Service</strong> با پشتیبانی از Redis و مدل‌های Mongoose.</p>
+          <div class="folder-structure mt-4">
+            <pre>
+<span class="keyword">├──</span> src/
+<span class="keyword">│   ├──</span> config/          <span class="comment"># اتصال MongoDB و Redis</span>
+<span class="keyword">│   ├──</span> models/          <span class="comment"># User.js (Mongoose schema)</span>
+<span class="keyword">│   ├──</span> services/        <span class="comment"># منطق تجاری، تعامل با دیتابیس</span>
+<span class="keyword">│   ├──</span> controllers/     <span class="comment"># مدیریت درخواست‌ها</span>
+<span class="keyword">│   ├──</span> middleware/      <span class="comment"># auth, rbac, validation</span>
+<span class="keyword">│   ├──</span> routes/          <span class="comment"># تعریف مسیرهای API</span>
+<span class="keyword">│   ├──</span> utils/           <span class="comment"># توابع کمکی، ثابت‌ها</span>
+<span class="keyword">│   └──</span> app.js           <span class="comment"># نقطه ورود اصلی</span>
+            </pre>
+          </div>
+        </div>
+        <div class="col-lg-6 mt-5 mt-lg-0">
+          <div class="card-bg p-4 d-flex flex-column gap-3">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+              <div><strong>Redis cache</strong> <span class="text-secondary d-block small">توکن‌های JWT در بلک‌لیست / کش</span></div>
+            </div>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+              <div><strong>Role-based guards</strong> <span class="text-secondary d-block small">میدلور `authorize` برای admin/user</span></div>
+            </div>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+              <div><strong>Global error handler</strong> <span class="text-secondary d-block small">مدیریت یکپارچه و لاگ‌گیری</span></div>
+            </div>
+            <hr class="divider-light">
+            <p class="small text-secondary mb-0"><i class="bi bi-github me-1"></i> برای مشاهده کامل به مخزن مراجعه کنید.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERSIAN / ENGLISH NOTE / CTA -->
+  <section class="py-5" style="background: #0a101e;">
+    <div class="container text-center">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <i class="bi bi-chat-quote-fill fs-1 text-accent opacity-50"></i>
+          <!-- <p class="lead fst-italic mt-2">پروژه کاملاً دوزبانه مستند شده است · both English and Persian comments available</p> -->
+          <div class="d-flex justify-content-center gap-2 mt-3">
+            <!-- <span class="badge-soft">فارسی</span> -->
+            <!-- <span class="badge-soft">English</span> -->
+          </div>
+          <div class="mt-5">
+            <!-- <a href="#" class="btn btn-glow btn-lg px-5 me-2"><i class="bi bi-stars"></i> ستاره در گیت‌هاب</a> -->
+            <a href="#" class="btn btn-outline-glow btn-lg px-5"><i class="bi bi-postcard-heart-fill"></i> ستاره در گیت هاب</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer py-4" style="border-top: 1px solid #212d4a;">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
+      <span class="small text-secondary">© 2025 User Management API — built with <i class="bi bi-heart-fill text-danger"></i> for developers</span>
+      <span class="small text-secondary">
+        <i class="bi bi-translate me-1"></i> مستندات فارسی | <i class="bi bi-github"></i> GitHub
+      </span>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS for toggler etc -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- optional smooth scroll -->
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if(target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>

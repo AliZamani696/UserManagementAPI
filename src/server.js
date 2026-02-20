@@ -7,6 +7,7 @@ const appConfig = require('./config/appConfig');
 const swaggerDocument = require('./swagger.json');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const path = require('path');
 require('dotenv').config();
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -14,7 +15,12 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.get('/', (req, res) => {
+  res.render('index');
+});
 const userRouter = require('./routes/userRoute');
 app.use('/api/users', userRouter);
 
