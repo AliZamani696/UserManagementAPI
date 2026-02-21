@@ -1,38 +1,59 @@
-# User Management API with Authentication
+<div dir="rtl" align="right">
 
 # وب‌سرویس مدیریت کاربران با احراز هویت
 
-[cite_start]این پروژه یک API RESTful برای مدیریت کاربران است که با استفاده از Node.js، Express و MongoDB ساخته شده است[cite: 3]. [cite_start]این سیستم از معماری استاندارد لایه‌ای (Controller-Service) بهره می‌برد [cite: 4] [cite_start]و امنیت آن توسط توکن‌های JWT، هش کردن رمزهای عبور با bcrypt [cite: 3] و کش کردن توکن‌ها با Redis تامین می‌شود.
+[![Node.js](https://img.shields.io/badge/Node.js-18.x-339933?logo=node.js)](https://nodejs.org)
+[![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express)](https://expressjs.com)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6.x-47A248?logo=mongodb)](https://mongodb.com)
+[![Redis](https://img.shields.io/badge/Redis-7.x-DC382D?logo=redis)](https://redis.io)
+[![JWT](https://img.shields.io/badge/JWT-auth-000000?logo=json-web-tokens)](https://jwt.io)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🚀 ویژگی‌ها (Features)
+</div>
 
-- [cite_start]**ثبت‌نام و ورود:** احراز هویت امن با هش کردن رمز عبور قبل از ذخیره‌سازی[cite: 20, 32, 33].
-- [cite_start]**مدیریت توکن‌ها (JWT + Redis):** تولید توکن‌های JWT [cite: 33] و کش کردن/مدیریت آن‌ها با استفاده از Redis برای افزایش امنیت و کارایی.
-- [cite_start]**کنترل دسترسی مبتنی بر نقش (RBAC):** پشتیبانی از نقش‌های `user` و `admin` برای محدودسازی دسترسی‌ها[cite: 15, 44].
-- [cite_start]**اعتبارسنجی داده‌ها:** بررسی و اعتبارسنجی ورودی‌های کاربر با استفاده از `express-validator`[cite: 45].
-- [cite_start]**معماری لایه‌بندی شده:** تفکیک منطق برنامه به لایه‌های مسیرها (Routes)، کنترلرها (Controllers)، سرویس‌ها (Services) و مدل‌ها (Models)[cite: 4].
-- [cite_start]**مدیریت خطای سراسری (Global Error Handling):** ساختار یکپارچه برای مدیریت خطاها[cite: 46].
+---
 
-## 🛠 تکنولوژی‌های استفاده شده (Tech Stack)
+**English** | [فارسی](#fa-version)
 
-- [cite_start]**Backend:** Node.js, Express [cite: 3]
-- [cite_start]**Database:** MongoDB (Mongoose) [cite: 3]
-- [cite_start]**Authentication & Security:** JWT (JSON Web Tokens), bcrypt [cite: 3]
-- **Caching:** Redis (برای کش کردن و مدیریت بلک‌لیست توکن‌ها)
-- [cite_start]**Validation:** express-validator [cite: 45]
+---
 
-## 📂 ساختار پروژه (Project Structure)
+<a id="en-version"></a>
+# User Management API with Authentication
 
-[cite_start]ساختار پوشه‌بندی این پروژه به شکل زیر است[cite: 60]:
+A robust RESTful API for user management built with Node.js, Express, MongoDB, and Redis. It features secure authentication (JWT + bcrypt), role-based access control (RBAC), token caching/blacklisting with Redis, and a clean layered architecture (Controller-Service). Ideal for projects needing a production-ready auth system.
+
+## ✨ Features
+
+- **Secure Registration & Login** – Passwords hashed with bcrypt before storage.
+- **JWT + Redis** – Tokens cached and managed in Redis (blacklist support for logout/invalidation).
+- **Role-Based Access Control (RBAC)** – Built-in `user` and `admin` roles with middleware protection.
+- **Data Validation** – Incoming requests validated using `express-validator`.
+- **Layered Architecture** – Separation of concerns: Routes, Controllers, Services, Models.
+- **Global Error Handling** – Centralized error handler with consistent JSON responses.
+- **Bilingual Support** – Code comments and documentation available in English and Persian.
+
+## 🛠️ Tech Stack
+
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB (Mongoose ODM)
+- **Caching & Token Mgmt:** Redis
+- **Authentication:** JWT, bcrypt
+- **Validation:** express-validator
+- **Security:** Helmet, CORS, rate limiting (optional)
+
+## 📁 Project Structure
 
 ```text
 ├── src/
-│   ├── config/          # تنظیمات دیتابیس و Redis [cite: 62, 63]
-│   ├── models/          # مدل‌های Mongoose (مانند User.js) [cite: 64, 65]
-│   ├── services/        # منطق تجاری و تعامل با دیتابیس [cite: 66, 67]
-│   ├── controllers/     # مدیریت درخواست‌ها و پاسخ‌ها [cite: 68, 69, 70]
-│   ├── middleware/      # میدلورهای احراز هویت، دسترسی و اعتبارسنجی [cite: 71, 72, 73, 74, 75]
-│   ├── routes/          # تعریف مسیرهای API [cite: 76, 77, 78]
-│   ├── utils/           # توابع کمکی و ثابت‌ها [cite: 79, 80]
-│   └── app.js           # نقطه ورود اصلی برنامه [cite: 81]
-```
+│   ├── config/          # Database & Redis connections
+│   ├── models/          # Mongoose models (User.js)
+│   ├── services/        # Business logic, DB interactions
+│   ├── controllers/     # Request handlers
+│   ├── middleware/      # Auth, RBAC, validation, error handler
+│   ├── routes/          # API route definitions
+│   ├── utils/           # Helpers, constants, token utils
+│   └── app.js           # App entry point
+├── .env.example         # Environment variables template
+├── .gitignore
+├── package.json
+└── README.md
