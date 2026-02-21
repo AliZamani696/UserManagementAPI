@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const generateToken = (user) => {
+const generateToken = (user, expiresIn = '1h') => {
   return jwt.sign(
     {
       id: user._id,
@@ -10,7 +10,7 @@ const generateToken = (user) => {
     },
     '0698dbaf55aa108e77dd8013276c4e0f751d2854b26101b9233277bfcbf937bf',
     {
-      expiresIn: '15m',
+      expiresIn: expiresIn,
     }
     // برای توکن های کوتاه مدت از JWT_ACCESS_SECRET
     //     process.env.JWT_ACCESS_SECRET,

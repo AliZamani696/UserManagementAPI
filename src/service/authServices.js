@@ -23,13 +23,17 @@ class authService {
       role,
     });
 
-    const token = generateToken(newUser);
+    /*for check redis
+     * redis-cli
+     * keys *
+     * get refresh
+     * ttl refresh
+     */
+    const token = generateToken(newUser, '15m');
     const refreshToken = generateRefreshToken(newUser);
 
     const refreshKey = `refresh:${newUser._id}`;
-    await redisClient.set(refreshKey, refreshToken, {
-      EX: 7 * 24 * 60 * 60,
-    });
+    await redisClient.set(refreshKey, refreshToken, { EX: 7 * 24 * 60 * 60 });
 
     return {
       user: {

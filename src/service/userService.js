@@ -50,10 +50,9 @@ class userService {
       })
       .select('-password -__v');
     if (!updatedUser) {
-      return res.status(404).json({
-        status: false,
-        message: 'کاربری با این شناسه یافت نشد.',
-      });
+      const error = new Error(`کاربری با این ${id}شناسه پیدا نشد.`);
+      error.statusCode = 404;
+      throw error;
     }
     return updatedUser;
   }
@@ -62,7 +61,7 @@ class userService {
     const { id } = req.params;
     const deletedUser = await user.findByIdAndDelete(id).select('-password -__v');
     if (!deletedUser) {
-      const error = new Error(`کاربری با این id ${id} پیدا نشد`);
+      const error = new Error(`کاربری با این ${id}شناسه پیدا نشد.`);
       error.statusCode = 404;
       throw error;
     }
@@ -72,15 +71,18 @@ class userService {
   async findAllUsers(req) {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    if (limit >= 10) {
+      const error = new Error(`درخواست با محدودیت بالا غیرمجاز میباشد!`);
+      error.statusCode = 400;
+      throw error;
+    }
     const skip = (page - 1) * limit;
+
     const queryObj = { ...req.query };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach((el) => delete queryObj[el]);
-    if (queryObj.name) {
-      queryObj.name = { $regex: queryObj.name, $options: 'i' };
-    }
 
-    const users = await user.find(queryObj).select('-password -__v').skip(skip).limit(limit).sort('-createdAt');
+    const users = await user.find().select('-password -__v').skip(skip).limit(limit).sort('-createdAt');
     const totalUsers = await user.countDocuments(queryObj);
     const totalPages = Math.ceil(totalUsers / limit);
 
@@ -139,10 +141,9 @@ class userService {
       })
       .select('-password -__v');
     if (!updatedUser) {
-      return res.status(404).json({
-        status: false,
-        message: 'کاربری با این شناسه یافت نشد.',
-      });
+      const error = new Error('کاربری با این شناسه یافت نشد.');
+      error.statusCode = 404;
+      throw error;
     }
     return updatedUser;
   }
